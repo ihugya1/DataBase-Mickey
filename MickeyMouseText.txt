@@ -1,0 +1,56 @@
+use DMIT1508SectionE01_ihugya1
+Go
+Drop Table MickeyMouseGrade
+Drop Table MickeyMouseCourse
+Drop Table MickeyMouseStudent
+Go
+
+Create Table MickeyMouseStudent			
+(
+	StudentID		decimal (8,0)	not null
+	Constraint PK_MickeyMouseStudent_StudentID
+	Primary Key Clustered,
+	FirstName		varchar (30)	null,
+	LastName		varchar (40)	null,
+	Address			varchar (50)	null,
+	Phone			varchar (10)	null,
+	EnrollmentDate	datetime		null
+	Constraint DF_MickeyMouseStudent_EnrollmentDate_GetDate
+	Default GetDate(),
+	Gender			char (1)		not null
+	Constraint CK_MickeyMouseStudent_Gender_MFN
+	Check(Gender Like '[M,F,N]')
+);
+
+Create Table MickeyMouseCourse
+(
+	CourseID		char (8)		not null
+	Constraint PK_MickeyMouseCourse_CourseID
+	Primary Key Clustered,
+	CourseName		varchar (50)	null,
+	CourseHours		decimal (3,0)	null
+	Constraint CK_MickeyMouseCourse_CourseHours_GrEqZero
+	Check(CourseHours >= 0),
+	CourseCost		decimal (6,2)	null
+	Constraint DF_MickeyMouseCourse_CourseCost_575
+	Default 575.00
+	Constraint CK_MickeyMouseCourse_CourseCost_GrEqZero
+	Check(CourseCost >= 0),
+);
+
+Create Table MickeyMouseGrade											
+(
+	StudentID		decimal (8,0)	not null
+	Constraint FK_MickeyMouseGrade_StudentID_to_MickeyMouseStudent_StudentID
+	References MickeyMouseStudent (StudentID),		
+	CourseID		char (8)		not null,		
+	Mark			decimal (5,2)	null
+	Constraint CK_MickeyMouseGrade_Mark_Zero_To_100
+	Check (Mark Between 0 and 100),
+	Constraint PK_MickeyMouseGrade_StudentID_CourseID
+	Primary Key Clustered (StudentID,CourseID),
+	Constraint FK_MickeyMouseGrades_CourseID_to_MickeyMouseCourse_CourseID
+	Foreign Key (CourseID)
+	References MickeyMouseCourse(CourseID)	
+);
+Go
